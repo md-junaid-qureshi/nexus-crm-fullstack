@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
 
 export type LeadStatus = "New" | "Contacted" | "Qualified" | "Converted" | "Lost";
 
@@ -54,6 +54,7 @@ interface LeadContextType {
 
 const LeadContext = createContext<LeadContextType | undefined>(undefined);
 
+// Initial Mock Data Fallbacks
 const initialMockLeads: Lead[] = [
   {
     id: "#LD-9842",
@@ -137,6 +138,29 @@ const initialMockLeads: Lead[] = [
   },
 ];
 
+const API_BASE = "http://localhost:5000/api/leads";
+
+// Mapping Helpers to align Client interfaces with Mongoose collections
+const mapLeadFromApi = (apiLead: any): Lead => ({
+  id: apiLead._id,
+  name: apiLead.name,
+  email: apiLead.email,
+  phone: apiLead.phone,
+  company: apiLead.companyName,
+  status: apiLead.leadStatus,
+  notes: apiLead.notes || "",
+  createdAt: apiLead.createdDate || apiLead.createdAt,
+});
+
+const mapLeadToApi = (lead: Omit<Lead, "id" | "createdAt">) => ({
+  name: lead.name,
+  email: lead.email,
+  phone: lead.phone,
+  companyName: lead.company,
+  leadStatus: lead.status,
+  notes: lead.notes,
+});
+
 export const LeadProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [leads, setLeads] = useState<Lead[]>(initialMockLeads);
   const [searchQuery, setSearchQuery] = useState("");
@@ -148,47 +172,122 @@ export const LeadProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const leadsPerPage = 5;
 
-  // Actions
-  const addLead = (leadData: Omit<Lead, "id" | "createdAt">) => {
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    const newLead: Lead = {
-      ...leadData,
-      id: `#LD-${randomNum}`,
-      createdAt: new Date().toISOString(),
-    };
-    setLeads((prev) => [newLead, ...prev]);
-    setCurrentPage(1); // Go to first page on add
+  // API Integration: GET Leads
+  const fetchLeads = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (statusFilter !== "All") params.append("status", statusFilter);
+      if (sortBy) params.append("sort", sortBy);
+      if (searchQuery.trim()) params.append("search", searchQuery);
+
+      const response = await fetch(`${API_BASE}?${params.toString()}`);
+      if (!response.ok) throw new Error("API retrieval error");
+      const data = await response.json();
+      setLeads(data.map(mapLeadFromApi));
+    } catch (error: any) {
+      console.warn("NexusCRM Backend offline. Switched to client fallback mode:", error.message);
+    }
   };
 
-  const updateLead = (id: string, updatedFields: Partial<Lead>) => {
-    setLeads((prev) =>
-      prev.map((lead) => (lead.id === id ? { ...lead, ...updatedFields } : lead))
-    );
+  // Trigger query refetches when criteria change
+  useEffect(() => {
+    fetchLeads();
+  }, [searchQuery, statusFilter, sortBy]);
+
+  // API Integration: POST Add Lead
+  const addLead = async (leadData: Omit<Lead, "id" | "createdAt">) => {
+    try {
+      const response = await fetch(API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mapLeadToApi(leadData)),
+      });
+      if (!response.ok) throw new Error("Failed to insert lead document");
+      const savedLead = await response.json();
+      setLeads((prev) => [mapLeadFromApi(savedLead), ...prev]);
+      setCurrentPage(1);
+    } catch (error) {
+      console.warn("API request failed. Falling back to local state insert:", error);
+      // Client-side fallback operation
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const newLead: Lead = {
+        ...leadData,
+        id: `local-${randomNum}`,
+        createdAt: new Date().toISOString(),
+      };
+      setLeads((prev) => [newLead, ...prev]);
+      setCurrentPage(1);
+    }
   };
 
-  const deleteLead = (id: string) => {
-    setLeads((prev) => prev.filter((lead) => lead.id !== id));
-    
-    // Adjust current page if current page becomes empty after deletion
-    setCurrentPage((prev) => {
-      const newFilteredCount = leads.filter((lead) => lead.id !== id).length;
-      const newTotalPages = Math.max(1, Math.ceil(newFilteredCount / leadsPerPage));
-      return prev > newTotalPages ? newTotalPages : prev;
-    });
+  // API Integration: PUT Update Lead
+  const updateLead = async (id: string, updatedFields: Partial<Lead>) => {
+    try {
+      const apiPayload: any = {};
+      if (updatedFields.name !== undefined) apiPayload.name = updatedFields.name;
+      if (updatedFields.email !== undefined) apiPayload.email = updatedFields.email;
+      if (updatedFields.phone !== undefined) apiPayload.phone = updatedFields.phone;
+      if (updatedFields.company !== undefined) apiPayload.companyName = updatedFields.company;
+      if (updatedFields.status !== undefined) apiPayload.leadStatus = updatedFields.status;
+      if (updatedFields.notes !== undefined) apiPayload.notes = updatedFields.notes;
+
+      const response = await fetch(`${API_BASE}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(apiPayload),
+      });
+      if (!response.ok) throw new Error("Failed to update lead document");
+      const updatedLead = await response.json();
+      setLeads((prev) =>
+        prev.map((lead) => (lead.id === id ? mapLeadFromApi(updatedLead) : lead))
+      );
+    } catch (error) {
+      console.warn("API request failed. Falling back to local state update:", error);
+      // Client-side fallback operation
+      setLeads((prev) =>
+        prev.map((lead) => (lead.id === id ? { ...lead, ...updatedFields } : lead))
+      );
+    }
   };
 
-  // Filter & Sort Logic
+  // API Integration: DELETE Lead
+  const deleteLead = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE}/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete lead document");
+      setLeads((prev) => prev.filter((lead) => lead.id !== id));
+      
+      setCurrentPage((prev) => {
+        const newFilteredCount = leads.filter((lead) => lead.id !== id).length;
+        const newTotalPages = Math.max(1, Math.ceil(newFilteredCount / leadsPerPage));
+        return prev > newTotalPages ? newTotalPages : prev;
+      });
+    } catch (error) {
+      console.warn("API request failed. Falling back to local state deletion:", error);
+      // Client-side fallback operation
+      setLeads((prev) => prev.filter((lead) => lead.id !== id));
+      setCurrentPage((prev) => {
+        const newFilteredCount = leads.filter((lead) => lead.id !== id).length;
+        const newTotalPages = Math.max(1, Math.ceil(newFilteredCount / leadsPerPage));
+        return prev > newTotalPages ? newTotalPages : prev;
+      });
+    }
+  };
+
+  // Client-side local filtering block (acts as the offline lookup core)
   const filteredLeads = useMemo(() => {
     let result = [...leads];
 
-    // Status Filter
+    // Status Filter (Fallback only when server fails to connect)
     if (statusFilter !== "All") {
       result = result.filter(
         (lead) => lead.status.toLowerCase() === statusFilter.toLowerCase()
       );
     }
 
-    // Search Query (name, email, company)
+    // Search Query (Fallback only when server fails to connect)
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -199,7 +298,7 @@ export const LeadProvider: React.FC<{ children: React.ReactNode }> = ({ children
       );
     }
 
-    // Sorting
+    // Sort order (Fallback only when server fails to connect)
     result.sort((a, b) => {
       if (sortBy === "date_desc") {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -226,7 +325,7 @@ export const LeadProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return Math.max(1, Math.ceil(filteredLeads.length / leadsPerPage));
   }, [filteredLeads.length, leadsPerPage]);
 
-  // Calculate stats dynamically from all leads currently in the list
+  // Stats calculation
   const totalStats = useMemo(() => {
     return {
       total: leads.length,
