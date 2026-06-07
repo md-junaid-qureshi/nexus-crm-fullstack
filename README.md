@@ -88,5 +88,4 @@ cd nexus-crm-fullstack
 * `vercel.json` -> Rules for routing frontend and backend together on Vercel.
 
 ```
-
 ```
