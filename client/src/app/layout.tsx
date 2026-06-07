@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: 'NexusCRM | Sales Dashboard',
   description: 'Enterprise Lead Management System',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/favicon.png',
     apple: '/logo.png',
   }
 };
@@ -21,7 +21,7 @@ export default function RootLayout({
       className="h-full antialiased"
     >
       <head>
-        <link rel="icon" href="/favicon.ico?v=4" type="image/x-icon" sizes="any" />
+        <link rel="icon" href="/favicon.png?v=4" type="image/x-icon" sizes="any" />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block"
           rel="stylesheet"
