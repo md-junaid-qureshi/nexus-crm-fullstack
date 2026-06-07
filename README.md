@@ -26,7 +26,7 @@ Follow these quick steps to get the app running on your own machine.
 
 ### 1. Grab the code
 ```bash
-git clone [https://github.com/md-jnid-qureshi/nexus-crm-fullstack.git](https://github.com/md-jnid-qureshi/nexus-crm-fullstack.git)
+git clone [https://github.com/md-junaid-qureshi/nexus-crm-fullstack.git](https://github.com/md-junaid-qureshi/nexus-crm-fullstack.git)
 cd nexus-crm-fullstack
 
 ```
