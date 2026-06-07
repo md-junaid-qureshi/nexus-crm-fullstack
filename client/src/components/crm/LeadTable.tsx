@@ -191,7 +191,7 @@ export default function LeadTable() {
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   Company
                 </th>
-                <th className="px-6 py-4 text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase">
                   Status
                 </th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
@@ -231,9 +231,9 @@ export default function LeadTable() {
                     <td className="px-6 py-4 text-xs text-slate-800 dark:text-slate-200 whitespace-nowrap font-medium">
                       {lead.company}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="text-left px-4 py-4 whitespace-nowrap">
                       <span
-                        className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider ${getStatusBadgeClass(
+                        className={`inline-flex items-center justify-center text-xs font-medium px-2.5 py-1 rounded-full ${getStatusBadgeClass(
                           lead.status
                         )}`}
                       >
