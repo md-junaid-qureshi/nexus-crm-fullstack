@@ -12,7 +12,7 @@ export default function StatCards() {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
       <div className="bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-100 p-6 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col justify-between h-36 relative overflow-hidden group transition-all duration-300">
         <div className="absolute top-0 right-0 w-20 h-20 bg-teal-50/40 dark:bg-teal-950/20 -mr-6 -mt-6 rounded-full opacity-60 transition-transform group-hover:scale-110"></div>
         <div className="z-10 flex flex-col items-start text-left w-full">

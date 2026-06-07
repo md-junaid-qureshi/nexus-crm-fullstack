@@ -93,16 +93,16 @@ export default function LeadTable() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white dark:bg-[#1e293b] p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm transition-all duration-300">
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center gap-2">
-            <label className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+      <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 bg-white dark:bg-[#1e293b] p-4 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-sm transition-all duration-300">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider shrink-0">
               Sort By
             </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="text-sm bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all text-slate-800 dark:text-slate-100"
+              className="w-full sm:w-auto text-sm bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all text-slate-800 dark:text-slate-100 cursor-pointer"
             >
               <option value="date_desc">Newest First</option>
               <option value="date_asc">Oldest First</option>
@@ -111,10 +111,10 @@ export default function LeadTable() {
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">From</span>
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full lg:w-auto lg:justify-end">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider w-8 sm:w-auto shrink-0 text-left">From</span>
               <input
                 type="date"
                 value={fromDate}
@@ -122,11 +122,11 @@ export default function LeadTable() {
                   setFromDate(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all"
+                className="w-full sm:w-auto border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all cursor-pointer"
               />
             </div>
-            <div className="flex items-center gap-1">
-              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">To</span>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <span className="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider w-8 sm:w-auto shrink-0 text-left">To</span>
               <input
                 type="date"
                 value={toDate}
@@ -134,12 +134,12 @@ export default function LeadTable() {
                   setToDate(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all"
+                className="w-full sm:w-auto border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-1.5 text-sm bg-white dark:bg-[#1e293b] text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 transition-all cursor-pointer"
               />
             </div>
           </div>
 
-          <div className="relative w-full md:w-44">
+          <div className="relative w-full sm:w-44">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[16px] pointer-events-none">
               filter_list
             </span>
@@ -149,7 +149,7 @@ export default function LeadTable() {
                 setStatusFilter(e.target.value);
                 setCurrentPage(1);
               }}
-              className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 pl-9 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 appearance-none transition-all text-slate-800 dark:text-slate-100"
+              className="w-full bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700 rounded-lg py-1.5 pl-9 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 appearance-none transition-all text-slate-800 dark:text-slate-100 cursor-pointer"
             >
               <option value="All">All Statuses</option>
               <option value="New">New</option>
@@ -165,13 +165,14 @@ export default function LeadTable() {
 
           <button
             onClick={handleExport}
-            className="bg-slate-100/80 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-2 border border-slate-200 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 cursor-pointer"
+            className="bg-slate-100/80 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-700/60 text-slate-800 dark:text-slate-100 cursor-pointer w-full sm:w-auto"
           >
             <span className="material-symbols-outlined text-[16px]">download</span>
             Export
           </button>
         </div>
       </div>
+
 
       <div className="bg-white dark:bg-[#1e293b] rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-[0_2px_8px_rgba(0,0,0,0.04)] overflow-hidden transition-all duration-300">
         <div className="overflow-x-auto custom-scrollbar">
